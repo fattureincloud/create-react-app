@@ -1,6 +1,6 @@
 {
   "name": "@fattureincloud/react-scripts",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fatture in cloud configuration and scripts for Create React App. Forked from CRA 3.2.0.",
   "repository": {
     "type": "git",
@@ -60,6 +60,8 @@
     "jest-environment-jsdom-fourteen": "0.1.0",
     "jest-resolve": "24.9.0",
     "jest-watch-typeahead": "0.4.0",
+    "less": "3.10.3",
+    "less-loader": "5.0.0",
     "mini-css-extract-plugin": "0.8.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "pnp-webpack-plugin": "1.5.0",
