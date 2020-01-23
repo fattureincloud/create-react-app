@@ -76,9 +76,8 @@ module.exports = function(webpackEnv) {
   // Webpack uses `publicPath` to determine where the app is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
   // In development, we always serve from the root. This makes config easier.
-  const publicPath = isEnvProduction || writeToDisk
-    ? paths.servedPath
-    : isEnvDevelopment && '/';
+  const publicPath =
+    isEnvProduction || writeToDisk ? paths.servedPath : isEnvDevelopment && '/';
   // Some apps do not use client-side routing with pushState.
   // For these, "homepage" can be set to "." to enable relative asset paths.
   const shouldUseRelativeAssetPaths = publicPath === './';
@@ -86,9 +85,10 @@ module.exports = function(webpackEnv) {
   // `publicUrl` is just like `publicPath`, but we will provide it to our app
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
   // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-  const publicUrl = isEnvProduction || writeToDisk
-    ? publicPath.slice(0, -1)
-    : isEnvDevelopment && '';
+  const publicUrl =
+    isEnvProduction || writeToDisk
+      ? publicPath.slice(0, -1)
+      : isEnvDevelopment && '';
   // Get environment variables to inject into our app.
   const env = getClientEnvironment(publicUrl);
 
@@ -181,7 +181,11 @@ module.exports = function(webpackEnv) {
     ].filter(Boolean),
     output: {
       // The build folder.
-      path: isEnvProduction ? paths.appBuild : (writeToDisk ? (paths.appBuild + '/../..') : undefined),
+      path: isEnvProduction
+        ? paths.appBuild
+        : writeToDisk
+        ? paths.appBuild + '/../..'
+        : undefined,
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
@@ -212,6 +216,8 @@ module.exports = function(webpackEnv) {
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
       globalObject: 'this',
+      hotUpdateChunkFilename: 'hot/hot-update.js',
+      hotUpdateMainFilename: 'hot/hot-update.json',
     },
     optimization: {
       minimize: isEnvProduction,
@@ -408,10 +414,7 @@ module.exports = function(webpackEnv) {
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
-              include: [
-                paths.appSrc,
-                paths.appOldSrc
-              ],
+              include: [paths.appSrc, paths.appOldSrc],
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve(
@@ -575,13 +578,17 @@ module.exports = function(webpackEnv) {
             },
             {
               test: /\.less$/,
-              use: [{
-                loader: 'style-loader' // creates style nodes from JS strings
-              }, {
-                loader: 'css-loader' // translates CSS into CommonJS
-              }, {
-                loader: 'less-loader' // compiles Less to CSS
-              }]
+              use: [
+                {
+                  loader: 'style-loader', // creates style nodes from JS strings
+                },
+                {
+                  loader: 'css-loader', // translates CSS into CommonJS
+                },
+                {
+                  loader: 'less-loader', // compiles Less to CSS
+                },
+              ],
             },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
