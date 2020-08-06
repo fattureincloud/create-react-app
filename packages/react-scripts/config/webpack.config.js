@@ -40,6 +40,8 @@ const postcssNormalize = require('postcss-normalize');
 
 const appPackageJson = require(paths.appPackageJson);
 
+const configJson = require(paths.appPublic + '/config.json');
+
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
@@ -58,6 +60,31 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
+
+class MetaInfoPlugin {
+  constructor(options) {
+    this.options = { filename: 'build/config.json', ...options };
+  }
+
+  apply(compiler) {
+    compiler.hooks.done.tap(this.constructor.name, stats => {
+      const metaInfo = {
+        // add any other information if necessary
+        version: stats.hash,
+      };
+      const json = JSON.stringify({ ...metaInfo, ...configJson });
+      return new Promise((resolve, reject) => {
+        fs.writeFile(this.options.filename, json, 'utf8', error => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve();
+        });
+      });
+    });
+  }
+}
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -613,6 +640,7 @@ module.exports = function(webpackEnv) {
       ],
     },
     plugins: [
+      new MetaInfoPlugin({ filename: 'build/config.json' }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(
