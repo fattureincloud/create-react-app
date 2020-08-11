@@ -72,7 +72,7 @@ class MetaInfoPlugin {
         // add any other information if necessary
         version: stats.hash,
       };
-      const json = JSON.stringify({ ...metaInfo, ...configJson });
+      const json = JSON.stringify({ ...configJson, ...metaInfo });
       return new Promise((resolve, reject) => {
         fs.writeFile(this.options.filename, json, 'utf8', error => {
           if (error) {
