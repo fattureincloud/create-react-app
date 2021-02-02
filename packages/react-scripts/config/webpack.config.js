@@ -43,10 +43,7 @@ const appPackageJson = require(paths.appPackageJson);
 const configJson = require(paths.appPublic + '/config.json');
 
 const childProcess = require('child_process');
-const VERSION = childProcess
-  .execSync('git rev-parse HEAD')
-  .toString()
-  .trim();
+const VERSION = childProcess.execSync('git rev-parse HEAD').toString().trim();
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -76,11 +73,11 @@ class MetaInfoPlugin {
     compiler.hooks.done.tap(this.constructor.name, () => {
       const metaInfo = {
         // add any other information if necessary
-        version: VERSION + (+new Date()).toString(16),
+        version: (+new Date()).toString(16) + '-' + VERSION,
       };
       const json = JSON.stringify({ ...configJson, ...metaInfo });
       return new Promise((resolve, reject) => {
-        fs.writeFile(this.options.filename, json, 'utf8', error => {
+        fs.writeFile(this.options.filename, json, 'utf8', (error) => {
           if (error) {
             reject(error);
             return;
@@ -94,7 +91,7 @@ class MetaInfoPlugin {
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function(webpackEnv) {
+module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
@@ -237,12 +234,13 @@ module.exports = function(webpackEnv) {
       publicPath: paths.cdnUrl,
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
-        ? info =>
+        ? (info) =>
             path
               .relative(paths.appSrc, info.absoluteResourcePath)
               .replace(/\\/g, '/')
         : isEnvDevelopment &&
-          (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+          ((info) =>
+            path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
       // Prevents conflicts when multiple Webpack runtimes (from different apps)
       // are used on the same page.
       jsonpFunction: `webpackJsonp${appPackageJson.name}`,
@@ -329,7 +327,7 @@ module.exports = function(webpackEnv) {
       // https://twitter.com/wSokra/status/969679223278505985
       // https://github.com/facebook/create-react-app/issues/5358
       runtimeChunk: {
-        name: entrypoint => `runtime-${entrypoint.name}`,
+        name: (entrypoint) => `runtime-${entrypoint.name}`,
       },
     },
     resolve: {
@@ -347,8 +345,8 @@ module.exports = function(webpackEnv) {
       // `web` extension prefixes have been added for better support
       // for React Native Web.
       extensions: paths.moduleFileExtensions
-        .map(ext => `.${ext}`)
-        .filter(ext => useTypeScript || !ext.includes('ts')),
+        .map((ext) => `.${ext}`)
+        .filter((ext) => useTypeScript || !ext.includes('ts')),
       alias: {
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
@@ -729,7 +727,7 @@ module.exports = function(webpackEnv) {
             return manifest;
           }, seed);
           const entrypointFiles = entrypoints.main.filter(
-            fileName => !fileName.endsWith('.map')
+            (fileName) => !fileName.endsWith('.map')
           );
 
           return {
