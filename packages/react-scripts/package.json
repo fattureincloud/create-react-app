@@ -1,6 +1,6 @@
 {
   "name": "@fattureincloud/react-scripts",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Fatture in cloud configuration and scripts for Create React App. Forked from CRA 3.2.0.",
   "repository": {
     "type": "git",
