@@ -43,7 +43,7 @@ const appPackageJson = require(paths.appPackageJson);
 const configJson = require(paths.appPublic + '/config.json');
 
 const childProcess = require('child_process');
-const VERSION = childProcess.execSync('git rev-parse HEAD').toString().trim();
+const VERSION = process.env.REACT_APP_VERSION;
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -73,7 +73,7 @@ class MetaInfoPlugin {
     compiler.hooks.done.tap(this.constructor.name, () => {
       const metaInfo = {
         // add any other information if necessary
-        version: (+new Date()).toString(16) + '-' + VERSION,
+        version: VERSION,
       };
       const json = JSON.stringify({ ...configJson, ...metaInfo });
       return new Promise((resolve, reject) => {
