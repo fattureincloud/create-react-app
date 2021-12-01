@@ -71,6 +71,36 @@ const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
+const configJson = require(paths.appPublic + '/config.json');
+
+const childProcess = require('child_process');
+const VERSION = process.env.REACT_APP_VERSION;
+
+class MetaInfoPlugin {
+  constructor(options) {
+    this.options = { filename: 'build/config.json', ...options };
+  }
+
+  apply(compiler) {
+    compiler.hooks.done.tap(this.constructor.name, () => {
+      const metaInfo = {
+        // add any other information if necessary
+        version: VERSION,
+      };
+      const json = JSON.stringify({ ...configJson, ...metaInfo });
+      return new Promise((resolve, reject) => {
+        fs.writeFile(this.options.filename, json, 'utf8', error => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve();
+        });
+      });
+    });
+  }
+}
+
 const hasJsxRuntime = (() => {
   if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
     return false;
@@ -89,6 +119,9 @@ const hasJsxRuntime = (() => {
 module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
+
+  // Passing this flag will write build files to the production build path
+  const writeToDisk = process.argv.includes('--writeToDisk');
 
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
@@ -203,7 +236,11 @@ module.exports = function (webpackEnv) {
         : paths.appIndexJs,
     output: {
       // The build folder.
-      path: isEnvProduction ? paths.appBuild : undefined,
+      path: isEnvProduction
+        ? paths.appBuild
+        : writeToDisk
+        ? paths.appBuild + '/../..'
+        : undefined,
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
@@ -220,7 +257,11 @@ module.exports = function (webpackEnv) {
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
-      publicPath: paths.publicUrlOrPath,
+      publicPath:
+        paths.envCdnUrl +
+        (process.env.REACT_APP_VERSION
+          ? process.env.REACT_APP_VERSION + '/'
+          : ''),
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info =>
@@ -235,6 +276,8 @@ module.exports = function (webpackEnv) {
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
       globalObject: 'this',
+      hotUpdateChunkFilename: 'hot/hot-update.js',
+      hotUpdateMainFilename: 'hot/hot-update.json',
     },
     optimization: {
       minimize: isEnvProduction,
@@ -400,7 +443,7 @@ module.exports = function (webpackEnv) {
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
-              include: paths.appSrc,
+              include: [paths.appSrc, paths.appOldSrc],
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve(
@@ -435,6 +478,14 @@ module.exports = function (webpackEnv) {
                 ),
                 // @remove-on-eject-end
                 plugins: [
+                  [
+                    require.resolve('@babel/plugin-proposal-decorators'),
+                    { legacy: true },
+                  ],
+                  [
+                    require.resolve('@babel/plugin-proposal-class-properties'),
+                    { loose: true },
+                  ],
                   [
                     require.resolve('babel-plugin-named-asset-import'),
                     {
@@ -555,6 +606,20 @@ module.exports = function (webpackEnv) {
               // See https://github.com/webpack/webpack/issues/6571
               sideEffects: true,
             },
+            {
+              test: /\.less$/,
+              use: [
+                {
+                  loader: 'style-loader', // creates style nodes from JS strings
+                },
+                {
+                  loader: 'css-loader', // translates CSS into CommonJS
+                },
+                {
+                  loader: 'less-loader', // compiles Less to CSS
+                },
+              ],
+            },
             // Adds support for CSS Modules, but using SASS
             // using the extension .module.scss or .module.sass
             {
@@ -595,6 +660,7 @@ module.exports = function (webpackEnv) {
       ],
     },
     plugins: [
+      new MetaInfoPlugin({ filename: 'build/config.json' }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(
@@ -675,6 +741,7 @@ module.exports = function (webpackEnv) {
           // both options are optional
           filename: 'static/css/[name].[contenthash:8].css',
           chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+          ignoreOrder: true,
         }),
       // Generate an asset manifest file with the following content:
       // - "files" key: Mapping of all asset filenames to their corresponding

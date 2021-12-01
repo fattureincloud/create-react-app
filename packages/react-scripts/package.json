@@ -1,10 +1,10 @@
 {
-  "name": "react-scripts",
-  "version": "4.0.1",
-  "description": "Configuration and scripts for Create React App.",
+  "name": "fattureincloud-react-scripts",
+  "version": "0.2.0",
+  "description": "Fatture in cloud configuration and scripts for Create React App. Forked from CRA 4.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/facebook/create-react-app.git",
+    "url": "https://github.com/fattureincloud/create-react-app.git",
     "directory": "packages/react-scripts"
   },
   "license": "MIT",
@@ -12,7 +12,7 @@
     "node": "^10.12.0 || >=12.0.0"
   },
   "bugs": {
-    "url": "https://github.com/facebook/create-react-app/issues"
+    "url": "https://github.com/fattureincloud/create-react-app/issues"
   },
   "files": [
     "bin",
@@ -40,6 +40,8 @@
     "babel-preset-react-app": "^10.0.0",
     "bfj": "^7.0.2",
     "camelcase": "^6.1.0",
+    "less": "3.10.3",
+    "less-loader": "5.0.0",
     "case-sensitive-paths-webpack-plugin": "2.3.0",
     "css-loader": "4.3.0",
     "dotenv": "8.2.0",

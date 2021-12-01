@@ -22,9 +22,16 @@ if (!NODE_ENV) {
   );
 }
 
+// Load the correct .env file.
+const dotenvName =
+  process.argv
+    .filter(value => value.includes('--env='))
+    .map(value => value.split('=')[1])
+    .reverse()[0] || process.env.NODE_ENV;
+
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
 const dotenvFiles = [
-  `${paths.dotenv}.${NODE_ENV}.local`,
+  `${paths.dotenv}.${dotenvName}.local`,
   // Don't include `.env.local` for `test` environment
   // since normally you expect tests to produce the same
   // results for everyone
