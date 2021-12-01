@@ -29,6 +29,7 @@ const publicUrlOrPath = getPublicUrlOrPath(
   process.env.PUBLIC_URL
 );
 
+const envCdnUrl = process.env.REACT_APP_FIC_CDN || publicUrlOrPath;
 const buildPath = process.env.BUILD_PATH || 'build';
 
 const moduleFileExtensions = [
@@ -76,6 +77,7 @@ module.exports = {
   appNodeModules: resolveApp('node_modules'),
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
+  envCdnUrl,
 };
 
 // @remove-on-eject-begin
@@ -104,6 +106,7 @@ module.exports = {
   ownNodeModules: resolveOwn('node_modules'), // This is empty on npm 3
   appTypeDeclarations: resolveApp('src/react-app-env.d.ts'),
   ownTypeDeclarations: resolveOwn('lib/react-app.d.ts'),
+  envCdnUrl,
 };
 
 const ownPackageJson = require('../package.json');
@@ -140,6 +143,7 @@ if (
     ownNodeModules: resolveOwn('node_modules'),
     appTypeDeclarations: resolveOwn(`${templatePath}/src/react-app-env.d.ts`),
     ownTypeDeclarations: resolveOwn('lib/react-app.d.ts'),
+    envCdnUrl,
   };
 }
 // @remove-on-eject-end
