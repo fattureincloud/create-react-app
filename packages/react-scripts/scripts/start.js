@@ -155,8 +155,12 @@ checkBrowsers(paths.appPath, isInteractive)
         );
       }
 
-      console.log(chalk.cyan('Starting the development server...\n'));
-      openBrowser(urls.localUrlForBrowser);
+      const writeToDisk = process.argv.includes('--writeToDisk');
+      if (writeToDisk) {
+        console.log(chalk.cyan('Building and writing to disk...\n'));
+      } else {
+        console.log(chalk.cyan('Starting the development server...\n'));
+      }
     });
 
     ['SIGINT', 'SIGTERM'].forEach(function (sig) {
