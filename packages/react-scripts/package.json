@@ -1,7 +1,7 @@
 {
-  "name": "react-scripts",
-  "version": "4.0.3",
-  "description": "Configuration and scripts for Create React App.",
+  "name": "@fattureincloud/react-scripts",
+  "version": "0.2.0",
+  "description": "Fatture in cloud configuration and scripts for Create React App. Forked from CRA 4.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/fattureincloud/create-react-app.git",
@@ -30,8 +30,7 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.16.0",
     "@babel/plugin-proposal-decorators": "^7.16.4",
-    "@babel/core": "7.12.3",
-    "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
+    "@babel/core": "^7.12.3",
     "@svgr/webpack": "5.5.0",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
@@ -64,8 +63,8 @@
     "jest-circus": "26.6.0",
     "jest-resolve": "26.6.0",
     "jest-watch-typeahead": "0.6.1",
-    "less": "^4.1.2",
-    "less-loader": "^10.2.0",
+    "less": "3.10.3",
+    "less-loader": "5.0.0",
     "mini-css-extract-plugin": "0.11.3",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "pnp-webpack-plugin": "1.6.4",
@@ -89,7 +88,7 @@
     "webpack": "4.44.2",
     "webpack-dev-server": "3.11.1",
     "webpack-manifest-plugin": "2.2.0",
-    "workbox-webpack-plugin": "5.1.4"
+    "workbox-webpack-plugin": "^5.1.4"
   },
   "devDependencies": {
     "react": "^17.0.1",

@@ -14,9 +14,7 @@ const table = require('text-table');
 
 const cwd = process.cwd();
 
-const emitErrorsAsWarnings =
-  process.env.NODE_ENV === 'development' &&
-  process.env.ESLINT_NO_DEV_ERRORS === 'true';
+const emitErrorsAsWarnings = false;
 
 function isError(message) {
   if (message.fatal || message.severity === 2) {

@@ -149,8 +149,14 @@ module.exports = function (api, opts, env) {
       [
         require('@babel/plugin-proposal-class-properties').default,
         {
-          loose: true,
+          loose: false,
         },
+      ],
+      [
+        require('@babel/plugin-proposal-private-property-in-object').default,
+        {
+          loose: false,
+        }
       ],
       // Adds Numeric Separators
       require('@babel/plugin-proposal-numeric-separator').default,
